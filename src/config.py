@@ -22,9 +22,9 @@ MODEL_PARAMS = {
 NUMERIC_FEATURES = [
     'MonthlyRevenue', 'MonthlyMinutes', 'TotalRecurringCharge',
     'DirectorAssistedCalls', 'OverageMinutes', 'RoamingCalls',
-    'PercChangeMinutes', 'PercChangeRevenues', 'CustServCalls', 'HandsetPrice'
+    'PercChangeMinutes', 'PercChangeRevenues'
 ]  # 'CustServCalls', 'HandsetPrice' are common in full set
-CATEGORICAL_FEATURES = ['IncomeGroup', 'OwnsMotorcycle']  # Low-cardinality from EDA
+CATEGORICAL_FEATURES = []  # Low-cardinality from EDA
 TARGET = 'Churn'  # Now 0/1 in full data
 
 # AWS (later)
