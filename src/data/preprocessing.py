@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.model_selection import train_test_split
+from src.data.batch_generator import generate_batches  # FIXED: Absolute import
 from src.config import RAW_DATA, PROCESSED_DATA, NUMERIC_FEATURES, CATEGORICAL_FEATURES, TARGET
 
 def load_and_preprocess():
@@ -48,13 +48,9 @@ def load_and_preprocess():
     
     return df, scaler, le
 
-def generate_batches(df, n_batches=5):
-    """Even-sized batches (~10K each) for drift sim"""
-    batch_size = len(df) // n_batches
-    batches = []
-    for i in range(n_batches):
-        start = i * batch_size
-        end = (i + 1) * batch_size if i < n_batches - 1 else len(df)
-        batch = df.iloc[start:end].reset_index(drop=True)
-        batches.append(batch)
-    return batches
+if __name__ == "__main__":
+    df, scaler, le = load_and_preprocess()
+    batches = generate_batches(df, n_batches=5)
+    for i, batch in enumerate(batches):
+        batch.to_csv(f"data/batches/batch_{i}.csv", index=False)
+    print("Preprocessing + batches complete!")
