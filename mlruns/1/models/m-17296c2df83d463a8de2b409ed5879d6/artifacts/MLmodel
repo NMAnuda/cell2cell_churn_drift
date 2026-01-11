@@ -1,0 +1,22 @@
+artifact_path: file:C:/Users/anuda/Desktop/cell2cell_churn_drift/mlruns/1/models/m-17296c2df83d463a8de2b409ed5879d6/artifacts
+flavors:
+  python_function:
+    data: model.ubj
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.xgboost
+    python_version: 3.13.3
+  xgboost:
+    code: null
+    data: model.ubj
+    model_class: xgboost.sklearn.XGBClassifier
+    model_format: ubj
+    xgb_version: 3.1.2
+mlflow_version: 3.8.1
+model_id: m-17296c2df83d463a8de2b409ed5879d6
+model_size_bytes: 448456
+model_uuid: m-17296c2df83d463a8de2b409ed5879d6
+prompts: null
+run_id: 29525079623a45a9b218c64dd2627055
+utc_time_created: '2026-01-11 07:43:57.106759'
