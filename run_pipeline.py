@@ -181,11 +181,11 @@ def run_pipeline():
 
         logger.info(" Pipeline finished successfully. MLflow run closed.")
         print("\n All metrics logged to MLflow!")
-        print(f"🔍 View results: mlflow ui --port 5000")
+        print(f" View results: mlflow ui --port 5000")
         print(f"   Then navigate to: http://localhost:5000")
 
     except Exception as e:
-        logger.error(f"❌ Pipeline failed: {e}")
+        logger.error(f"Pipeline failed: {e}")
         import traceback
         traceback.print_exc()
         raise
