@@ -1,7 +1,7 @@
 """
-Local MLOps Simulation: Full Churn Pipeline
-- Preprocess → Batches → Train → Drift Detect → Retrain → Log MLflow → Alert → Schedule
-- Usage: python run_pipeline.py
+Local MLOps Simulation: Full Churn Pipeline with AWS Toggle
+- USE_AWS = False: Core pipeline only (no AWS).
+- USE_AWS = True: Calls aws folder files for real S3/Lambda/EC2 (.env keys).
 """
 
 from sklearn.metrics import precision_recall_curve
@@ -15,6 +15,21 @@ import mlflow.xgboost
 import schedule
 import time
 from datetime import datetime
+import json 
+
+# AWS Toggle
+USE_AWS = False 
+
+if USE_AWS:
+    from dotenv import load_dotenv
+    import boto3
+    from src.aws.s3_upload import upload_to_s3
+    from src.aws.trigger_retrain import trigger_retrain
+    from src.aws.deploy_model import deploy_model
+    load_dotenv()  # Loads .env
+    print("AWS ON: Using real S3/Lambda/EC2 via aws folder (.env keys)")
+else:
+    print("AWS OFF: Core pipeline only (no AWS calls)")
 
 from src.data.preprocessing import load_and_preprocess
 from src.data.batch_generator import generate_batches
@@ -22,22 +37,15 @@ from src.model.train import train_model
 from src.model.drift_detector import detect_drift
 from src.config import NUMERIC_FEATURES, CATEGORICAL_FEATURES, TARGET, PSI_THRESHOLD
 
-# =========================
 # MLflow Setup
-# =========================
 mlflow.set_tracking_uri("sqlite:///mlflow.db")
 mlflow.set_experiment("Churn Drift Pipeline")
 
-# =========================
 # Logging Setup
-# =========================
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-
-# =========================
 # Pipeline Function
-# =========================
 def run_pipeline():
     logger.info("Pipeline started...")
 
@@ -55,11 +63,16 @@ def run_pipeline():
 
             logger.info(f"Batches generated: {len(batches)}")
 
-            # Log parameters EARLY
+            # Log parameters
             mlflow.log_param("n_batches", 5)
             mlflow.log_param("psi_threshold", PSI_THRESHOLD)
             mlflow.log_param("target", TARGET)
             logger.info("Parameters logged")
+
+            # AWS: Upload batches if on
+            if USE_AWS:
+                upload_to_s3('data/batches/batch_0.csv')  # Calls s3_upload.py
+                # Repeat for other batches if needed
 
             # 2. Baseline Train
             logger.info("Step 2: Training baseline...")
@@ -72,11 +85,15 @@ def run_pipeline():
 
             logger.info(f"Baseline: F1={f1_base:.3f}, AUC={auc_base:.3f}")
 
-            # Log baseline metrics immediately
+            # Log baseline metrics
             mlflow.log_metric("baseline_f1", f1_base)
             mlflow.log_metric("baseline_auc", auc_base)
             mlflow.log_param("baseline_threshold", threshold_base)
             logger.info("Baseline metrics logged")
+
+            # AWS: Upload baseline model if on
+            if USE_AWS:
+                upload_to_s3('models/baseline_model_improved.pkl')  # Calls s3_upload.py
 
             # 3. Drift Detection
             logger.info("Step 3: Detecting drift...")
@@ -96,6 +113,10 @@ def run_pipeline():
             mlflow.log_metric("drift_psi_avg", drift_psi_avg)
             mlflow.log_param("drift_threshold", PSI_THRESHOLD)
             logger.info("Drift metrics logged")
+
+            # AWS: Trigger Lambda if on
+            if USE_AWS and has_drift:
+                trigger_retrain(drift_psi_avg)  # Calls trigger_retrain.py
 
             # 4. Retrain if Drift
             f1_re = f1_base
@@ -133,6 +154,10 @@ def run_pipeline():
                 mlflow.log_param("retrained_threshold", threshold_re)
                 mlflow.log_param("retrained", True)
                 logger.info("Retrain metrics logged")
+
+                # AWS: Deploy model if on
+                if USE_AWS:
+                    deploy_model('models/retrained_model.pkl')  # Calls deploy_model.py
             else:
                 mlflow.log_param("retrained", False)
 
@@ -152,9 +177,9 @@ def run_pipeline():
 
             plt.figure(figsize=(8, 6))
             plt.plot(recall, precision, label="Baseline PR Curve", linewidth=2)
-            plt.xlabel("Recall", fontsize=12)
-            plt.ylabel("Precision", fontsize=12)
-            plt.title("Precision-Recall Curve", fontsize=14)
+            plt.xlabel("Recall")
+            plt.ylabel("Precision")
+            plt.title("Precision-Recall Curve")
             plt.legend()
             plt.grid(True, alpha=0.3)
             plt.tight_layout()
@@ -191,9 +216,7 @@ def run_pipeline():
         raise
 
 
-# =========================
 # Scheduler
-# =========================
 def job():
     try:
         run_pipeline()
@@ -202,11 +225,9 @@ def job():
 
 
 if __name__ == "__main__":
-
     print("Running pipeline immediately...")
     
     job()
-
 
     print("Scheduler started (daily at 02:00)")
     print("  Press Ctrl+C to stop")

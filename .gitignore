@@ -1,0 +1,84 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# C extensions
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# MLflow
+mlruns/
+mlflow.db
+
+# Data (large files)
+data/batches/*.csv
+data/processed/*.csv
+data/raw/*.csv  # If large, or keep if small
+
+# Models (large binaries)
+models/*.pkl
+models/*.h5
+models/*.joblib
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# AWS credentials (if any)
+.aws/
+
+# Temp files
+tmp/
+temp/
+*.tmp
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# PyInstaller
+build/
+dist/
+
+# Docker
+.dockerignore
+Dockerfile
+
+# Git
+.git/
+.gitignore
