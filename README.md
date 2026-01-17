@@ -54,40 +54,42 @@ The system monitors customer behavior over time and automatically adapts when da
     cell2cell_churn_drift/
     │
     ├── data/
-    │   ├── raw/                  # Original dataset files (CSV)
-    │   ├── processed/            # Cleaned & feature-engineered datasets
-    │   └── batches/              # Time-split batches for drift simulation
+    │   ├── raw/                          # Original dataset files (CSV)
+    │   ├── processed/                    # Cleaned & feature-engineered datasets
+    │   └── batches/                      # Time-split batches for drift simulation
     │
     ├── notebooks/
-    │   ├── 01_data_exploration.ipynb  # EDA, feature distributions
-    │   ├── 02_baseline_model.ipynb    # Train initial churn model
-    │   ├── 03_drift_analysis.ipynb    # PSI, KS test analysis
-    │   └── 04_model_retraining.ipynb  # Retraining experiments
+    │   ├── 01_data_exploration.ipynb     # EDA, feature distributions
+    │   ├── 02_baseline_model.ipynb       # Train initial churn model
+    │   ├── 03_drift_analysis.ipynb       # PSI, KS test analysis
+    │   └── 04_model_retraining.ipynb     # Retraining experiments
     │
     ├── src/
     │   ├── data/
-    │   │   ├── preprocessing.py       # Cleaning, feature encoding, scaling
-    │   │   ├── batch_generator.py     # Split data into simulated time batches
-    │   │   └── utils.py               # Helper functions
+    │   │   ├── preprocessing.py          # Cleaning, feature encoding, scaling
+    │   │   ├── batch_generator.py        # Split data into simulated time batches
+    │   │   └── utils.py                  # Helper functions
     │   │
     │   ├── model/
-    │   │   ├── train.py               # Model training script
-    │   │   ├── evaluate.py            # Model evaluation metrics
-    │   │   ├── inference.py           # Make predictions on new data
-    │   │   └── drift_detector.py      # PSI, KS, label drift calculations
+    │   │   ├── train.py                  # Model training script
+    │   │   ├── evaluate.py               # Model evaluation metrics
+    │   │   ├── inference.py              # Make predictions on new data
+    │   │   └── drift_detector.py         # PSI, KS, label drift calculations
     │   │
     │   ├── aws/
-    │   │   ├── s3_upload.py           # Upload raw/processed data to S3
-    │   │   ├── lambda_handler.py      # Lambda logic for drift detection
-    │   │   ├── trigger_retrain.py     # Trigger SageMaker retraining
-    │   │   └── deploy_model.py        # Deploy trained model to endpoint
+    │   │   ├── s3_upload.py              # Upload raw/processed data to S3
+    │   │   ├── lambda_handler.py         # Lambda logic for drift detection
+    │   │   ├── trigger_retrain.py        # Trigger SageMaker retraining
+    │   │   └── deploy_model.py           # Deploy trained model to endpoint
     │   │
-    │   └── config.py                  # Global paths, thresholds, and constants
+    │   └── config.py                     # Global paths, thresholds, and constants
     │
-    ├── requirements.txt               # Python dependencies
-    ├── README.md                       # Project overview and documentation
-    ├── architecture_diagram.png        # Visual representation of the pipeline
-    └── .gitignore
+    ├── requirements.txt                  # Python dependencies
+    ├── README.md                         # Project overview and documentation
+    ├── .env                              # AWS credentials (gitignore'd)
+    ├── .gitignore
+    ├── serve-model.py
+    └── run_pipeline.py                   # Master script (toggle AWS)
 
 
 ---
