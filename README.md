@@ -150,6 +150,6 @@ mlflow ui --port 5000
 
 ## Technologies Used
 
-Python | XGBoost | Scikit-learn | Pandas, NumPy | MLflow | Flask | Schedule | Matplotlib | AWS (EC2, S3, Lambda) | Boto3
+Python | XGBoost | Scikit-learn | Pandas, NumPy | MLflow | Schedule | Matplotlib | AWS (EC2, S3, Lambda) | Boto3
 
 ![](./pictrure/image.png)
